@@ -1,0 +1,69 @@
+
+var Models = require("../models")
+var UserMgt = require("./UserMgt");
+const {promisify} = require('util');
+
+
+
+const EMPTY = "__empty__";
+
+class RoomMgt {
+
+
+	constructor() {
+		this.rooms = [ new Models.Room(1, 5, 1, 2),
+				new Models.Room(2, 10, 2, 4)
+			];
+		this.roomStates = {};
+		this.populateRoom();
+	}
+
+	populateRoom() {
+	}
+
+	getAll() {
+		return this.rooms;
+	}
+
+	get(roomId) {
+		if(roomId > 0 && roomId <= this.rooms.length)
+			return this.rooms[roomId-1];
+		else
+			return null;
+	}
+
+	async connect(roomId, pos, username, amount) {
+
+		let room = this.get(roomId);
+		let user = UserMgt.get(username);
+		let result = {message : "", success: false};
+		if(!room) {
+			result.message = "Unable to find the room";
+		}
+		else if(!user) {
+			result.message = "Unable to find the user";
+		}
+		else if(user.balance <= amount) {
+			result.message = "insufficient balance";
+		}
+		else if(pos < 0 || pos >= room.capacity) {
+			result.message = "Invalid room position";
+		}
+		else {
+			
+			let roomState = await getListItem(room.id, pos);
+
+			if(roomState == EMPTY) { 
+				user.balance = user.balance - amount; // TODO - Take lock on before updating the value
+				result.message = username + " joined " + room.name;
+				result.success = true;
+				result.roomName = room.name;
+			} else {
+				result.message = "Position is already occupied";
+			}
+
+		}
+		return result;
+	}
+};
+module.exports = new RoomMgt();
