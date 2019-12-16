@@ -1,7 +1,9 @@
 
 var Models = require("../models")
 var UserMgt = require("./UserMgt");
+var cache = require("../redis/redis-client");
 const {promisify} = require('util');
+const getListItem = promisify(cache.lindex).bind(cache);
 
 
 
@@ -19,6 +21,10 @@ class RoomMgt {
 	}
 
 	populateRoom() {
+		this.rooms.forEach((room) => {
+			cache.del(room.id);
+			cache.rpush(room.id , new Array(room.capacity).fill(EMPTY));
+		});
 	}
 
 	getAll() {
@@ -55,6 +61,7 @@ class RoomMgt {
 
 			if(roomState == EMPTY) { 
 				user.balance = user.balance - amount; // TODO - Take lock on before updating the value
+				cache.lset(room.id, pos, username); // TODO - Take lock on before updating the value
 				result.message = username + " joined " + room.name;
 				result.success = true;
 				result.roomName = room.name;
