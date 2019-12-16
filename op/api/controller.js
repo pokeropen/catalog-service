@@ -2,6 +2,7 @@
 
 var services = require("../services");
 var models = require("../models");
+var MessageService = require("../eventsource");
 
 const rooms = [ new models.Room(1, 5, 1, 2),
 				new models.Room(2, 10, 2, 4)
@@ -28,7 +29,13 @@ var controllers = {
 		var promise = services.RoomMgt.connect(joinReq.roomId, joinReq.pos, joinReq.username, joinReq.amount);
 		promise.then((result) => {	
 			if(result && result.success) {
-				res.json(result);
+				// If success send the event
+				MessageService.sendEvent(result.roomName, {username : joinReq.username, event: "Joined_Room"})
+								.then((msg)=> {
+									res.json(result);
+								}).catch((error) => {
+									res.status(412).send(error);
+								})
 			}
 			else {
 				res.status(412).send(result);
