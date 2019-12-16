@@ -1,0 +1,41 @@
+{
+  "name": "catalog-service",
+  "version": "0.1.0",
+  "description": "Catalog Service for Open Poker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test nyc --reporter=text ./node_modules/.bin/mocha --exit --timeout 50000 --require @babel/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:pokeropen/catalog-service.git"
+  },
+  "author": "Vijay Kumar Jalagari",
+  "bugs": {
+    "url": "git@github.com:pokeropen/catalog-service/issues"
+  },
+  "homepage": "https://github.com/pokeropen/catalog-service#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "kafka-node": "^5.0.0",
+    "node-fetch": "^2.6.0",
+    "redis": "^2.8.0",
+    "redis-lock": "^0.1.4",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/node": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/register": "^7.7.4",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.2",
+    "nodemon": "^2.0.1",
+    "nyc": "^14.1.1",
+    "redis-mock": "^0.47.0"
+  }
+}
