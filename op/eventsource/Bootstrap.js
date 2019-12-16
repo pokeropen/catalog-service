@@ -3,12 +3,13 @@ const services = require("../services");
 
 let topics = [];
 let topics_consume = [];
+let producer = null;
 
 try {
 	const kafkaHost = 'localhost:9092',
 		  client = new KafkaClient({kafkaHost});
 
-	const producer = new HighLevelProducer(client);
+	producer = new HighLevelProducer(client);
 
 
 	let rooms = services.RoomMgt.getAll();
@@ -33,12 +34,17 @@ try {
 
 	producer.on("error", (err) => {
 		console.log("Error while connecting connecting to kafka " + err);
-	})
+	});
 
-	function sendEvent(topic, message) {
+	
+} catch(error) {
+	console.log("Error while setup kafka ", error);
+}
+
+ function sendEvent(topic, message) {
 		return new Promise(function(resolve, reject) {
 			console.log("Sending event ", topic, message);
-			producer.send([{ topic: topic, messages: message, attributes : 2}], 
+			producer.send([{ topic: topic, messages: message, attributes : 0}],  // Use encoding
 				((err, data) => {
 					if(err) {
 						console.log("Fail to delivery message ", err);
@@ -51,8 +57,5 @@ try {
 			);
 	    });
 	}
-} catch(error) {
-	console.log("Error while setup kafka ", error);
-}
 
 module.exports = { topics : topics_consume, sendEvent : sendEvent};

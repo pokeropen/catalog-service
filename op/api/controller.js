@@ -33,8 +33,8 @@ var controllers = {
 				MessageService.sendEvent(result.roomName, {username : joinReq.username, event: "Joined_Room"})
 								.then((msg)=> {
 									res.json(result);
-								}).catch((error) => {
-									res.status(412).send(error);
+								}).catch((error) => {  
+									res.status(500).send(error);
 								})
 			}
 			else {
